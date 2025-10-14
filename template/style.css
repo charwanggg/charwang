@@ -5,7 +5,7 @@
     --accent2: #EC9A29; 
     --background: #222222;
     --text: #000000;
-    --nav-width: 250px;
+    --nav-width: 200px;
 }
 
 a
@@ -32,7 +32,7 @@ nav {
     width: var(--nav-width);
     height: 100vh;
     position: fixed;
-    padding: 2rem;
+    padding: 0.5rem;
 }
 
 .nav-header {
