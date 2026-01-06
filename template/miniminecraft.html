@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Minecraft</title>
+    <style>
+        :root {
+            --primary: #FFFFFF;
+            --secondary: #028090;
+            --accent: #00BFB2;
+            --accent2: #EC9A29; 
+            --background: #FAFAFA;
+            --text: #1e1e1e;
+            --navbar: #E8E8E8;
+            --nav-width: 200px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+        }
+
+        nav {
+            background-color: var(--navbar);
+            width: var(--nav-width);
+            height: 100vh;
+            position: fixed;
+            padding: 2rem;
+            border-right: 2px solid var(--primary);
+        }
+
+        .nav-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .nav-header h1 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-header p {
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            display: block;
+            padding: 0.25rem 0.25rem;
+            border-radius: 0;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+            background-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        main {
+            margin-left: var(--nav-width);
+            flex-grow: 1;
+            padding: 3rem;
+            max-width: 1400px;
+        }
+
+        .project-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .project-title {
+            color: var(--secondary);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 2rem;
+            font-weight: 500;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            background-color: var(--primary);
+            margin-bottom: 3rem;
+            border: 2px solid var(--navbar);
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .project-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+
+        /* MAIN CONTENT — FLATTENED */
+        .project-description {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        .project-description h2 {
+            color: var(--secondary);
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .project-description h2:first-child {
+            margin-top: 0;
+        }
+
+        .project-description h3 {
+            color: var(--accent);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-description p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+        
+        .project-description a {
+            color: var(--secondary);
+        }
+
+        .project-description ul {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-highlight {
+            background-color: var(--background);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0;
+        }
+
+        .feature-highlight p {
+            margin-bottom: 0.25rem;
+            line-height: 1.8;
+        }
+
+        /* SIDEBAR — STILL SEPARATED BUT SQUARE */
+        .project-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+
+        .sidebar-section {
+            background-color: var(--primary);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 2px solid var(--navbar);
+        }
+
+        .sidebar-section h3 {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .section-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .section-nav-link {
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .section-nav-link:hover {
+            color: var(--accent);
+            background-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .section-nav-link.active {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-tag {
+            background-color: var(--secondary);
+            color: white;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .link-button {
+            display: block;
+            width: 100%;
+            padding: 0.9rem;
+            margin-bottom: 0.75rem;
+            background-color: var(--accent);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid var(--accent);
+        }
+
+        .link-button:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .link-button.secondary {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+        }
+
+        .link-button.secondary:hover {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+      .gallery {
+            margin-top: 4rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            border: 2px solid var(--navbar);
+            overflow: hidden;
+            transition: transform 0.3s;
+            background-color: var(--primary);
+        }
+
+        /* FORCE-FIT IMAGE CONTAINER */
+        .gallery-item img {
+            width: 100%;
+            height: 200px;            /* 🔑 fixed visual height */
+            object-fit: cover;       /* 🔑 force fit + crop */
+            display: block;
+        }
+
+        /* .gallery-item:hover {
+            transform: translateY(-5px);
+        } */
+
+        .gallery-caption {
+            padding: 1rem;
+            background-color: var(--primary);
+            border-top: 2px solid var(--navbar);
+        }
+
+        .in-text-image {
+            display: block;
+            max-width: 100%;
+            margin: 2.5rem auto;
+            border: 2px solid var(--navbar);
+            background-color: var(--primary);
+        }
+
+        .in-text-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .in-text-image figcaption {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            color: var(--text);
+            background-color: var(--background);
+            border-top: 2px solid var(--navbar);
+        }
+
+        .in-text-image.compare {
+            margin: 3rem 0;
+            border: 2px solid var(--navbar);
+            background-color: var(--primary);
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            background-color: var(--navbar);
+        }
+
+        /* FORCE-FIT CONTAINERS */
+        .compare-item {
+            position: relative;
+            background-color: var(--primary);
+            aspect-ratio: 16 / 9; /* 🔑 controls final shape */
+            overflow: hidden;
+        }
+
+        .compare-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;   /* 🔑 force fit + crop */
+            display: block;
+        }
+
+        /* Overlay label */
+        .compare-label {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Caption */
+        .in-text-image.compare figcaption {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            color: var(--text);
+            background-color: var(--background);
+            border-top: 2px solid var(--navbar);
+        }
+
+        /* Mobile fallback */
+        @media (max-width: 768px) {
+            .compare-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .compare-item {
+                aspect-ratio: 16 / 9;
+            }
+        }
+/* Mobile fallback */
+@media (max-width: 768px) {
+    .compare-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+        @media (max-width: 1200px) {
+            .project-content {
+                grid-template-columns: 1fr;
+            }
+            .project-sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            nav {
+                position: static;
+                width: 100%;
+                height: auto;
+            }
+
+            main {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+
+            .project-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>Charlie Wang</h1>
+            <p>Game Developer & Graphics</p>
+        </div>
+        <ul>
+            <li><a href="../index.html">Home </a></li>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#terraingen">Terrain Generation</a></li>
+            <li><a href="#multithreading">Multithreading </a></li>
+            <li><a href="#deferred">Deferred Rendering</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <header class="project-header">
+            <h1 class="project-title">Mini Minecraft</h1>
+            <p class="project-subtitle"> An OpenGL Voxel Game Engine and final project for CIS 4600 Course. </p>
+            <div class="project-meta">
+                <span class="meta-item"> Completed: Dec 2025</span>
+                <span class="meta-item"> Development: 4 Weeks</span>
+                <span class="meta-item"> Team: 3 developers</span>
+            </div>
+        </header>
+
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/watch?v=QdRux1v67jY" title="Project Demo Video" allowfullscreen></iframe>
+        </div>
+
+        <div class="project-content">
+            <div class="project-description">
+                <h2 id="overview">Project Overview</h2>
+                <p> Mini Minecraft is the final project for CIS 4600 Interactive Computer Graphics at UPenn. My team included myself, Bryan Chung, and Sarah Jamal.  </p>
+
+                <p> The project was split into three milestone. I was in charge of procedural terrain generation, multi-threading optimization, and deferred rendering/screen space reflections for the three milestones respectively. </p>
+                <p> Technologies used: &nbsp; 
+                        <span class="tech-tag">C++</span>
+                        <span class="tech-tag">OpenGL</span>
+                        <span class="tech-tag">GLSL</span>
+                        <span class="tech-tag">Git</span>
+                </p>
+
+                <h2 id="terraingen">Procedural Terrain Generation</h2>
+
+                <h3 id ="mountains"> Mountains </h3>
+                <img src="../static/MM Mountains.png" alt="Mini Minecraft Mountains" class="in-text-image">
+                <div>
+                    <p class = "feature-highlight"> Custom Mountain Generation algorithm combining Gradient Erosion techniques with a curl-based ridge noise. </p>
+                </div>
+                <p>For Milestone 1, I implemented terrain generation. Going into the project one of my goals was to get really good terrain generation, especially really nice mountains. I began my work in the terrain visualizer and quickly implemented the biome blending features. For grass land, I simply tuned the numbers on the layered Perlin noise in the base code, turning down the amplitude. </p>  
+
+                <p> Then, I began researching mountain generation techniques. My goal was to have nice mountains with cool ridges. 
+                I experimented heavily with different noises. I wanted twisty, fractal ridges coming out of my mountains. 
+                I used Ridged FBM to make the fractal noise more sharp and less rounded. 
+                After some research, I found that using the Curl of points could cause a cool twisty effect.
+                roblems arose when I try to add the Ridge noise to the layered Perlin noise of the base code. 
+                Because the ridged FBM was too sharp and abrupt it made it hard to combine it with the Perlin Noise. 
+                It caused sharp rises and plateaus. So I took the radial average around each point to smooth it down. </p>
+                <img src="../static/MM Ridge noise.png" alt="Curl Ridge Noise" class="in-text-image">
+                <p> Then, I implemented the Gradient Erosion technique detailed in <a href = "https://www.youtube.com/watch?v=gsJHzBTPG0Y"> this video</a>. The technique involves finding the Gradient of each layer Perlin noise and summing them. 
+                    Then, you take that sum and reduce the influence of the layer based on how steep the summed gradient is, mimicking erosion. I referenced <a href = "https://iquilezles.org/articles/morenoise/"> this article </a> to find the gradient of Perlin noise.</p>
+
+                <p> Lastly I combined the effects and tuned the influence of the two noises to create the mountains we have.</p>
+                <p> For badlands, I used the same algorithm as the mountains. Later I would use my teammate's cave generation to carve through the badlands to create some cool arches. </p>
+                 <img src="../static/MM Mesa.png" alt="Mini Minecraft Badlands" class="in-text-image">
+
+
+                <h3 id ="continents"> Continents </h3>
+                <p> The first thing I added was continens and oceans. Just like how we determine if a block is mountain or grassland based on a perlin noise, I use noise to determine if a block is in continent or ocean.
+                    Since we are adding more biomes, we created a Struct that contains all the biome variables: Continentalness (to determine if in ocean or on land), Erosion (low erosion means mountains, high erosion means flat land), Moisture (to determine between desert/badland and grassland/mountain). </p> 
+
+                <p> For the continentalness noise, I referenced this video: https://www.youtube.com/watch?v=wdHU5D-pvvo and used Fractal Perlin Noise with high lacunarity to create coastline like variations on the edges of the perlin noise. 
+                    I then layered it on top of another fractal perlin noise with higher starting frequency to create islands between the continents. 
+                    Now we have a noise for continentalness. To add it to the original terrain, I simply created oceanfloor terrain with Fractal Perlin Noise and blend it with the original terrain by mixing it by continentalness. We then add sand where land is near water level where continentalness is low. </p>
+                
+                <img src="../static/MM Continental Noise.png" alt="Mini Minecraft Continent Noise" class="in-text-image">
+
+                <p> The result combined with our previous terrain gen is something that looks like this. </p>
+                <img src="../static/MM Continents and Islands.png" alt="Mini Minecraft Continents" class="in-text-image">
+
+                <h3 id ="deserts"> Deserts </h3>
+
+                For desert, I start with a with a noise of vertical lines. Then I add voronoi on top and vary everything with FBM. 
+                Then when I sample the noise I add a little bit of random rotational variation so the dunes don't always go in the same direction. 
+                This however caused some problems when you go far away because the rotation is centered around (0, 0). 
+                My solution was quite crude I just reset the center of the rotation at a per cell basis every (4096, 4096) and did a little bit blending between cells. 
+                Ultimately, it does not look very good but it is rare enough that I can live with it given the time constraints.                
+                <img src="../static/MM Desert.png" alt="Mini Minecraft Deserts" class="in-text-image">
+
+                <h2 id="multithreading"> Multi-threading </h2>
+                <img src="../static/MM Multithreading.png" alt="Mini Minecraft Multi-threaded Terrain Generations" class="in-text-image">
+                <p> For Milestone 2's multithreading, I created the blocktypeworker and VBO worker as recommended. The blocktypeworker was easy to set up -- for each chunk, I created a worker to run a thread that calculated noise and generated block types based on that noise. 
+                    I kept a separate std::vector of chunks that are generated. When each thread was done, it would lock the mutex corresponding to the vector, write the chunk it made to it, and then unlock it. Then at each tick, I would empty this vector and begin building VBO data for each newly generated chunk. Issues arose when I worked on the VBO Worker because a chunk's VBO data is dependent on the chunk data of surrounding VBOs. 
+                    The initial solution was to update surrounding chunk VBOs whenever a new chunk was done generating. However, this approach caused seems in the terrain where faces on the edge of terrain zones will not be rendered. </p> 
+
+                <p> The solution was to: on each tick, check that all chunks in radius have been generated, then buffer everything that has not been buffered yet. For chunks that were on the edge of terrain zones, their VBOs need to be rebuilt if new chunks were generated near them. Lastly, you had to draw all the terrain zones.</p>
+                
+                <h2 id="deferred"> Deferred Rendering </h2>
+                <h3 id = "deferredsetup"> Set Up </h3>
+                <p> Setting up deferred rendering was a massive struggle. It was a lot of messing around with the gbuffer shaders and the pipeline before I could even get the position and normal rendering. 
+                    I then followed <a href = "https://imanolfotia.com/blog/1">this blog</a> for SSR. 
+                    I struggled a lot with getting everything into the right space (world vs view) and getting the depth buffer to work correctly. </p>
+                
+                <figure class="in-text-image compare">
+                    <div class="compare-grid">
+                        <div class="compare-item">
+                            <img src="../static/MM Deferred Position.png" alt="Position">
+                            <span class="compare-label">Position</span>
+                        </div>
+
+                        <div class="compare-item">
+                            <img src="../static/MM Deferred Normal Pass.png" alt="Normal">
+                            <span class="compare-label">Normal</span>
+                        </div>
+
+                        <div class="compare-item">
+                            <img src="../static/MM Deferred Albedo.png" alt="Albedo">
+                            <span class="compare-label">Albedo</span>
+                        </div>
+
+                        <div class="compare-item">
+                            <img src="../static/MM Deferred Material.png" alt="Material">
+                            <span class="compare-label">Material</span>
+                        </div>
+
+                        <figcaption>
+                            Different Deferred Passes
+                        </figcaption>
+                    </div>
+                </figure>
+
+                <h3 id = "SSR"> Screen Space Reflections </h3>
+                <p> However, there was one problem. 
+                    After Bryan reset up the lighting for the deferred pipeline, we realized that there was no shading and AO for the blocks underwater. 
+                    This is because the deferred lighting pass only has access to the following: position, normal, and material of the top most layer and the combined albedo of the scene which included the block underwater. 
+                    What we need is separate position, normal, and albedo buffers for transparent and opaque objects. 
+                    The solution is making a separate gbuffer shader for transparent objects and passing both sets into the lighting shader. 
+                    One issue is that we can have only have 1 Depth buffer this way. So how can we tell which pixel has a transparent layer on top? 
+                    We can use the albedo buffer for the transparent layer. 
+                    If the length of the color at a pixel is 0, we know that there's nothing there. So now we have transmissive SSR! 
+                </p>
+
+                <figure class="in-text-image compare">
+                    <div class="compare-grid">
+                        <div class="compare-item">
+                            <img src="../static/MM nontransmissive SSR.png" alt="Before optimization">
+                            <span class="compare-label">Non-transmissive</span>
+                        </div>
+
+                        <div class="compare-item">
+                            <img src="../static/MM Transmissive SSR.png" alt="After optimization">
+                            <span class="compare-label">Transmissive</span>
+                        </div>
+                    </div>
+
+                    <figcaption>
+                        Notice there is no shading under the water before. 
+                    </figcaption>
+                </figure>
+
+                <p> Another issue was the artifacting due to floating point error. Often, the raymarch would start below the water and immediately hit the water, causing it to find no reflection. 
+                    We fix this by adjusting the start location of each raymarch manually up by a little bit. This makes the reflections slightly inaccurate but it is not very noticeable.  
+
+                <figure class="in-text-image compare">
+                    <div class="compare-grid">
+                        <div class="compare-item">
+                            <img src="../static/MM SSR before.png" alt="Before optimization">
+                            <span class="compare-label">Before</span>
+                        </div>
+
+                        <div class="compare-item">
+                            <img src="../static/MM SSR after.png" alt="After optimization">
+                            <span class="compare-label">After</span>
+                        </div>
+                    </div>
+
+                    <figcaption>
+                        Red shows areas where there were no reflections were found previously due to immediately hitting water.
+                    </figcaption>
+                </figure>
+
+                <p> In the end, there were still some issues with my SSR implementation. Due to floating point error, the quality of SSR decreases as you move further from (0,0).
+                    Converting from world to local coordinates could potentially fix that, but we did not have time to implement this. 
+                </p>
+
+
+
+            </div>
+
+            <aside class="project-sidebar">
+
+                <div class="sidebar-section" id="section-nav-container">
+                    <h3>In this Section</h3>
+                    <div class="section-nav" id="section-nav">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <section class="gallery">
+            <h2 id="gallery">Project Gallery / Bloopers</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="../static/MM Upside Down.png" alt="Upside Down Trees">
+                    <div class="gallery-caption">"Dinnerbone" Trees </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../static/MM Wall of Cactus.png" alt="Wall of Cactus">
+                    <div class="gallery-caption">The Great Wall of Cactus</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../static/MM SSR island.png" alt="SSR Island">
+                    <div class="gallery-caption">Island with SSR</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../static/MM Initial Terrain Gen.png" alt="Terrain Gen v1">
+                    <div class="gallery-caption">Terrain Gen v1</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../static/MM Terrain Gen 2.png" alt="Terrian Gen v2">
+                    <div class="gallery-caption">Terrian Gen v2</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../static/MM Cool Island.png" alt="Cool Island">
+                    <div class="gallery-caption"> Islands </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../static/MM Desert without AO.png" alt="Desert">
+                    <div class="gallery-caption">Desert Dunes w/o Ambiant Occlusion</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../static/MM Accidental Hell.png" alt="Accidental Hell">
+                    <div class="gallery-caption"> Accidentally made hell </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../static/MM Noise gone wrong.png" alt="Noise gone wrong">
+                    <div class="gallery-caption">Cave noise gone wrong</div>
+                </div>
+                
+            </div>
+        </section>
+    </main>
+
+    <script>
+    const sections = {
+        overview: [],
+        terraingen: [
+            { id: 'mountains', text: 'Mountains' },
+            { id: 'continents', text: 'Continents' },
+            { id: 'deserts', text: 'Deserts' },
+        ],
+        multithreading: [],
+        deferred: [
+            { id: 'set up', text: 'Deferred Set Up'},
+            { id: "SSR", text: "Screen Space Reflections"}
+        ],
+        gallery: []
+    };
+
+    let currentSection = 'overview';
+    const sectionNavContainer = document.getElementById('section-nav');
+
+    function updateSectionNav(section) {
+        if (currentSection === section) return;
+        currentSection = section;
+
+        const subsections = sections[section];
+        
+        if (subsections && subsections.length > 0) {
+            sectionNavContainer.innerHTML = subsections.map(sub => 
+                `<a href="#${sub.id}" class="section-nav-link">${sub.text}</a>`
+            ).join('');
+        } else {
+            sectionNavContainer.innerHTML = '<p style="color: var(--text); opacity: 0.6; font-size: 0.9rem;">No subsections</p>';
+        }
+    }
+
+    // Intersection Observer to detect current section
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+                if (sections[id]) {
+                    updateSectionNav(id);
+                }
+            }
+        });
+    }, {
+        rootMargin: '-100px 0px -60% 0px'
+    });
+
+    // Observe all main sections
+    Object.keys(sections).forEach(section => {
+        const element = document.getElementById(section);
+        if (element) {
+            observer.observe(element);
+        }
+    });
+
+    // Initialize with overview
+    updateSectionNav('overview');
+
+    // Highlight active subsection link
+    document.addEventListener('scroll', () => {
+        const links = document.querySelectorAll('.section-nav-link');
+        links.forEach(link => {
+            const targetId = link.getAttribute('href').substring(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                const rect = target.getBoundingClientRect();
+                if (rect.top <= 150 && rect.bottom >= 150) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
