@@ -28,7 +28,7 @@ body {
     display: flex;
 }
 
- nav {
+nav {
     background-color: var(--navbar);
     width: var(--nav-width);
     height: 100vh;
@@ -177,3 +177,24 @@ footer {
     }
 }
 
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    nav {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+
+    main {
+        margin-left: 0;
+        padding: 1.5rem;
+    }
+
+    .project-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
