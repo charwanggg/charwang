@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Husk</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        main {
+            padding: 3rem;
+            max-width: 1400px;
+        }
+
+        .project-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .detail-title {
+            color: var(--secondary);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            font-weight: 500;
+        }
+
+        .hero-image {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            background-color: var(--primary);
+            border: 2px solid var(--navbar);
+            margin-bottom: 3rem;
+        }
+
+        .detail-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+
+        .detail-description h2,
+        .gallery h2 {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .detail-description p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .sidebar-section {
+            background-color: var(--primary);
+            padding: 2rem;
+            border: 2px solid var(--navbar);
+            border-radius: 8px;
+        }
+
+        .sidebar-section h3 {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .gallery {
+            margin-top: 3rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2rem;
+        }
+
+        .gallery-item {
+            overflow: hidden;
+            background-color: var(--primary);
+            border: 2px solid var(--navbar);
+            border-radius: 8px;
+        }
+
+        .gallery-item:first-child {
+            grid-column: 1 / -1;
+        }
+
+        .gallery-item img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .gallery-caption {
+            padding: 1rem 1.25rem;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .detail-content,
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-item:first-child {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 1.5rem;
+            }
+
+            .detail-title {
+                font-size: 2rem;
+            }
+
+            .project-meta {
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>Charlie Wang</h1>
+            <p>Game Developer &amp; Graphics</p>
+        </div>
+        <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <header class="project-header">
+            <h1 class="detail-title">Project Husk</h1>
+            <p class="project-subtitle">A turn-based tactics game built around strategic multi-action turns and a reaction system.</p>
+            <div class="project-meta">
+                <span>Development: Aug 2025&ndash;Present</span>
+                <span>Status: In Development</span>
+            </div>
+        </header>
+
+        <img src="../static/Husk_Thumbnail.png" alt="Project Husk battle scene" class="hero-image">
+
+        <div class="detail-content">
+            <section class="detail-description" id="overview">
+                <h2>Project Overview</h2>
+                <p>Project Husk is a turn-based tactics game currently in development. Its combat system focuses on flexible, multi-action turns and reactions that let units respond to events as a battle unfolds.</p>
+                <p>This page is a visual preview of the project while development continues. More details about its systems and development process will be added in the future.</p>
+            </section>
+
+            <aside>
+                <div class="sidebar-section">
+                    <h3>Technologies</h3>
+                    <div class="tech-list">
+                        <span class="tag">Unity</span>
+                        <span class="tag">Animations</span>
+                        <span class="tag">VFX & Particles</span>
+                        <span class="tag">URP Shadergraph</span>
+                        <span class="tag">Blender</span>
+                        <span class="tag">C#</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <section class="gallery" id="gallery">
+            <h2>Project Gallery</h2>
+            <div class="gallery-grid">
+                <figure class="gallery-item">
+                    <img src="../static/Husk_Default.png" alt="Project Husk default gameplay state">
+                    <figcaption class="gallery-caption">Tactical Gameplay</figcaption>
+                </figure>
+                <figure class="gallery-item">
+                    <img src="../static/Husk_Attack.png" alt="Project Husk attack action">
+                    <figcaption class="gallery-caption">Attack Action</figcaption>
+                </figure>
+                <figure class="gallery-item">
+                    <img src="../static/Husk_Reaction.png" alt="Project Husk reaction system">
+                    <figcaption class="gallery-caption">Reaction System</figcaption>
+                </figure>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
