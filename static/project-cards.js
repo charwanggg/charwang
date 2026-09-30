@@ -2,8 +2,6 @@
     "use strict";
 
     const cardSelector = ".project-card";
-    const videoSelector = `${cardSelector} .project-video`;
-    const audioFadeDuration = 450;
     let fitFrame;
 
     function contentFits(content) {
@@ -46,115 +44,6 @@
         fitFrame = requestAnimationFrame(fitAllCards);
     }
 
-    function cardWantsAudio(card) {
-        return card.matches(":hover") || card.contains(document.activeElement);
-    }
-
-    function initializeVideos() {
-        document.querySelectorAll(videoSelector).forEach((video) => {
-            if (video.dataset.cardVideoInitialized === "true") {
-                return;
-            }
-
-            video.dataset.cardVideoInitialized = "true";
-            const card = video.closest(cardSelector);
-            let fadeFrame = null;
-
-            function stopFade() {
-                cancelAnimationFrame(fadeFrame);
-                fadeFrame = null;
-            }
-
-            function silenceVideo(pauseVideo) {
-                stopFade();
-                video.volume = 0;
-                video.muted = true;
-
-                if (pauseVideo) {
-                    video.pause();
-                }
-            }
-
-            function fadeVolume(targetVolume) {
-                stopFade();
-
-                const startingVolume = video.volume;
-                const volumeChange = targetVolume - startingVolume;
-
-                if (targetVolume > 0) {
-                    video.muted = false;
-                }
-
-                if (volumeChange === 0) {
-                    if (targetVolume === 0) {
-                        video.muted = true;
-                    }
-                    return;
-                }
-
-                const startedAt = performance.now();
-
-                function updateVolume(now) {
-                    const progress = Math.min((now - startedAt) / audioFadeDuration, 1);
-                    const easedProgress = progress * progress * (3 - (2 * progress));
-                    const volume = startingVolume + (volumeChange * easedProgress);
-                    video.volume = volume;
-
-                    if (progress < 1) {
-                        fadeFrame = requestAnimationFrame(updateVolume);
-                        return;
-                    }
-
-                    fadeFrame = null;
-                    if (targetVolume === 0) {
-                        video.muted = true;
-                    }
-                }
-
-                fadeFrame = requestAnimationFrame(updateVolume);
-            }
-
-            function syncVideo() {
-                if (document.hidden) {
-                    silenceVideo(true);
-                    return;
-                }
-
-                video.play().catch(() => {
-                    // Muted autoplay can still be disabled by a user's browser settings.
-                });
-
-                if (cardWantsAudio(card)) {
-                    fadeVolume(1);
-                } else {
-                    fadeVolume(0);
-                }
-            }
-
-            video.volume = 0;
-            video.muted = true;
-            video.loop = true;
-            video.playsInline = true;
-
-            card.addEventListener("mouseenter", syncVideo);
-            card.addEventListener("mouseleave", syncVideo);
-            card.addEventListener("focusin", syncVideo);
-            card.addEventListener("focusout", () => {
-                requestAnimationFrame(syncVideo);
-            });
-
-            document.addEventListener("visibilitychange", () => {
-                if (document.hidden) {
-                    silenceVideo(true);
-                } else {
-                    syncVideo();
-                }
-            });
-
-            syncVideo();
-        });
-    }
-
     window.addEventListener("resize", scheduleCardFit);
     fitAllCards();
 
@@ -162,5 +51,4 @@
         document.fonts.ready.then(scheduleCardFit);
     }
 
-    initializeVideos();
 })();
