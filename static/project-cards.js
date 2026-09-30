@@ -3,6 +3,7 @@
 
     const cardSelector = ".project-card";
     const videoSelector = `${cardSelector} iframe[src*="youtube.com/embed/"]`;
+    const audioFadeDuration = 450;
     let fitFrame;
 
     function contentFits(content) {
@@ -45,7 +46,7 @@
         fitFrame = requestAnimationFrame(fitAllCards);
     }
 
-    function cardWantsPlayback(card) {
+    function cardWantsAudio(card) {
         return card.matches(":hover") || card.contains(document.activeElement);
     }
 
@@ -57,27 +58,107 @@
 
             iframe.dataset.hoverPlayerInitialized = "true";
             const card = iframe.closest(cardSelector);
-            const state = { player: null, ready: false };
+            const state = {
+                player: null,
+                ready: false,
+                inView: false,
+                fadeFrame: null
+            };
+
+            function stopFade() {
+                cancelAnimationFrame(state.fadeFrame);
+                state.fadeFrame = null;
+            }
+
+            function silencePlayer(pauseVideo) {
+                stopFade();
+                state.player.setVolume(0);
+                state.player.mute();
+
+                if (pauseVideo) {
+                    state.player.pauseVideo();
+                }
+            }
+
+            function fadeVolume(targetVolume, pauseWhenSilent) {
+                stopFade();
+
+                const startingVolume = state.player.getVolume();
+                const volumeChange = targetVolume - startingVolume;
+
+                if (targetVolume > 0) {
+                    state.player.unMute();
+                }
+
+                if (volumeChange === 0) {
+                    if (targetVolume === 0) {
+                        state.player.mute();
+                        if (pauseWhenSilent) {
+                            state.player.pauseVideo();
+                        }
+                    }
+                    return;
+                }
+
+                const startedAt = performance.now();
+
+                function updateVolume(now) {
+                    const progress = Math.min((now - startedAt) / audioFadeDuration, 1);
+                    const easedProgress = progress * progress * (3 - (2 * progress));
+                    const volume = startingVolume + (volumeChange * easedProgress);
+                    state.player.setVolume(Math.round(volume));
+
+                    if (progress < 1) {
+                        state.fadeFrame = requestAnimationFrame(updateVolume);
+                        return;
+                    }
+
+                    state.fadeFrame = null;
+                    if (targetVolume === 0) {
+                        state.player.mute();
+                        if (pauseWhenSilent && !state.inView) {
+                            state.player.pauseVideo();
+                        }
+                    }
+                }
+
+                state.fadeFrame = requestAnimationFrame(updateVolume);
+            }
 
             function syncPlayback() {
                 if (!state.ready) {
                     return;
                 }
 
-                if (cardWantsPlayback(card)) {
-                    state.player.mute();
-                    state.player.playVideo();
+                if (document.hidden || !state.inView) {
+                    fadeVolume(0, true);
+                    return;
+                }
+
+                state.player.playVideo();
+
+                if (cardWantsAudio(card)) {
+                    fadeVolume(100, false);
                 } else {
-                    state.player.pauseVideo();
+                    fadeVolume(0, false);
                 }
             }
+
+            const visibilityObserver = new IntersectionObserver((entries) => {
+                const entry = entries[0];
+                state.inView = entry.isIntersecting && entry.intersectionRatio >= 0.5;
+                syncPlayback();
+            }, {
+                threshold: [0, 0.5]
+            });
 
             state.player = new YT.Player(iframe, {
                 events: {
                     onReady(event) {
                         state.ready = true;
+                        event.target.setVolume(0);
                         event.target.mute();
-                        syncPlayback();
+                        visibilityObserver.observe(event.target.getIframe());
                     }
                 }
             });
@@ -90,8 +171,14 @@
             });
 
             document.addEventListener("visibilitychange", () => {
-                if (document.hidden && state.ready) {
-                    state.player.pauseVideo();
+                if (!state.ready) {
+                    return;
+                }
+
+                if (document.hidden) {
+                    silencePlayer(true);
+                } else {
+                    syncPlayback();
                 }
             });
         });
