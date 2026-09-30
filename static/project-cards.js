@@ -2,7 +2,7 @@
     "use strict";
 
     const cardSelector = ".project-card";
-    const videoSelector = `${cardSelector} iframe[src*="youtube.com/embed/"]`;
+    const videoSelector = `${cardSelector} .project-video`;
     const audioFadeDuration = 450;
     let fitFrame;
 
@@ -50,52 +50,44 @@
         return card.matches(":hover") || card.contains(document.activeElement);
     }
 
-    function initializePlayers() {
-        document.querySelectorAll(videoSelector).forEach((iframe) => {
-            if (iframe.dataset.hoverPlayerInitialized === "true") {
+    function initializeVideos() {
+        document.querySelectorAll(videoSelector).forEach((video) => {
+            if (video.dataset.cardVideoInitialized === "true") {
                 return;
             }
 
-            iframe.dataset.hoverPlayerInitialized = "true";
-            const card = iframe.closest(cardSelector);
-            const state = {
-                player: null,
-                ready: false,
-                inView: false,
-                fadeFrame: null
-            };
+            video.dataset.cardVideoInitialized = "true";
+            const card = video.closest(cardSelector);
+            let fadeFrame = null;
 
             function stopFade() {
-                cancelAnimationFrame(state.fadeFrame);
-                state.fadeFrame = null;
+                cancelAnimationFrame(fadeFrame);
+                fadeFrame = null;
             }
 
-            function silencePlayer(pauseVideo) {
+            function silenceVideo(pauseVideo) {
                 stopFade();
-                state.player.setVolume(0);
-                state.player.mute();
+                video.volume = 0;
+                video.muted = true;
 
                 if (pauseVideo) {
-                    state.player.pauseVideo();
+                    video.pause();
                 }
             }
 
-            function fadeVolume(targetVolume, pauseWhenSilent) {
+            function fadeVolume(targetVolume) {
                 stopFade();
 
-                const startingVolume = state.player.getVolume();
+                const startingVolume = video.volume;
                 const volumeChange = targetVolume - startingVolume;
 
                 if (targetVolume > 0) {
-                    state.player.unMute();
+                    video.muted = false;
                 }
 
                 if (volumeChange === 0) {
                     if (targetVolume === 0) {
-                        state.player.mute();
-                        if (pauseWhenSilent) {
-                            state.player.pauseVideo();
-                        }
+                        video.muted = true;
                     }
                     return;
                 }
@@ -106,91 +98,62 @@
                     const progress = Math.min((now - startedAt) / audioFadeDuration, 1);
                     const easedProgress = progress * progress * (3 - (2 * progress));
                     const volume = startingVolume + (volumeChange * easedProgress);
-                    state.player.setVolume(Math.round(volume));
+                    video.volume = volume;
 
                     if (progress < 1) {
-                        state.fadeFrame = requestAnimationFrame(updateVolume);
+                        fadeFrame = requestAnimationFrame(updateVolume);
                         return;
                     }
 
-                    state.fadeFrame = null;
+                    fadeFrame = null;
                     if (targetVolume === 0) {
-                        state.player.mute();
-                        if (pauseWhenSilent && !state.inView) {
-                            state.player.pauseVideo();
-                        }
+                        video.muted = true;
                     }
                 }
 
-                state.fadeFrame = requestAnimationFrame(updateVolume);
+                fadeFrame = requestAnimationFrame(updateVolume);
             }
 
-            function syncPlayback() {
-                if (!state.ready) {
+            function syncVideo() {
+                if (document.hidden) {
+                    silenceVideo(true);
                     return;
                 }
 
-                if (document.hidden || !state.inView) {
-                    fadeVolume(0, true);
-                    return;
-                }
-
-                state.player.playVideo();
+                video.play().catch(() => {
+                    // Muted autoplay can still be disabled by a user's browser settings.
+                });
 
                 if (cardWantsAudio(card)) {
-                    fadeVolume(100, false);
+                    fadeVolume(1);
                 } else {
-                    fadeVolume(0, false);
+                    fadeVolume(0);
                 }
             }
 
-            const visibilityObserver = new IntersectionObserver((entries) => {
-                const entry = entries[0];
-                state.inView = entry.isIntersecting && entry.intersectionRatio >= 0.5;
-                syncPlayback();
-            }, {
-                threshold: [0, 0.5]
-            });
+            video.volume = 0;
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
 
-            state.player = new YT.Player(iframe, {
-                events: {
-                    onReady(event) {
-                        state.ready = true;
-                        event.target.setVolume(0);
-                        event.target.mute();
-                        visibilityObserver.observe(event.target.getIframe());
-                    }
-                }
-            });
-
-            card.addEventListener("mouseenter", syncPlayback);
-            card.addEventListener("mouseleave", syncPlayback);
-            card.addEventListener("focusin", syncPlayback);
+            card.addEventListener("mouseenter", syncVideo);
+            card.addEventListener("mouseleave", syncVideo);
+            card.addEventListener("focusin", syncVideo);
             card.addEventListener("focusout", () => {
-                requestAnimationFrame(syncPlayback);
+                requestAnimationFrame(syncVideo);
             });
 
             document.addEventListener("visibilitychange", () => {
-                if (!state.ready) {
-                    return;
-                }
-
                 if (document.hidden) {
-                    silencePlayer(true);
+                    silenceVideo(true);
                 } else {
-                    syncPlayback();
+                    syncVideo();
                 }
             });
+
+            syncVideo();
         });
     }
-
-    const previousReadyHandler = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = function () {
-        if (typeof previousReadyHandler === "function") {
-            previousReadyHandler();
-        }
-        initializePlayers();
-    };
 
     window.addEventListener("resize", scheduleCardFit);
     fitAllCards();
@@ -199,7 +162,5 @@
         document.fonts.ready.then(scheduleCardFit);
     }
 
-    if (window.YT && typeof window.YT.Player === "function") {
-        initializePlayers();
-    }
+    initializeVideos();
 })();
