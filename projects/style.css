@@ -66,7 +66,7 @@ nav a {
     text-decoration: none;
     font-weight: bold;
     transition: all 0.3s;
-    font-size: 1.1rem;
+    font-size: 1rem;
     display: block;
     padding: 0.75rem 1rem;
     border-radius: 0;
@@ -82,62 +82,145 @@ main {
     margin-left: var(--nav-width);
     flex-grow: 1;
     padding: 2rem;
-    max-width: 1200px;
+    max-width: 1400px;
 }
 
 .section-title {
     color: var(--accent);
-    margin: 2rem 0;
+    margin: 1.5rem 0;
     font-size: 2rem;
 }
 
-.project-card {
-    background-color: var(--primary);
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 3rem;
+#featured,
+#techprojects,
+#gamedesign {
     display: grid;
-    grid-template-columns: 2fr 3fr;
-    transition: transform 0.3s;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+#featured .section-title,
+#techprojects .section-title,
+#gamedesign .section-title {
+    grid-column: 1 / -1;
+    margin-bottom: 1rem;
+}
+
+#featured .section-title {
+    margin-top: 1rem;
+}
+
+.project-card {
+    display: grid;
+    grid-template-columns: minmax(260px, 2fr) 3fr;
+    min-width: 0;
+    width: 100%;
+    height: 225px;
+    background: #f4f4f4;
+    border: 1px solid #dedede;
+    border-radius: 10px;
+    padding: 0.5rem;
+    margin-bottom: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(30, 30, 30, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .project-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(0px);
+    box-shadow: 0 7px 18px rgba(30, 30, 30, 0.11);
 }
 
 .project-image {
-    width: 400px;
-    height: 300px;
-    min-height: 300px;
-    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    min-height: 190px;
+    object-fit: contain;
+    background: #eaeaea;
+    border-radius: 6px;
+}
+
+.project-card > a {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 190px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #e7e9e9;
+    border-radius: 6px;
+}
+
+.project-card > a .project-image {
+    height: 100%;
+}
+
+.project-card iframe {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    height: 100%;
+    min-height: 190px;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: 6px;
 }
 
 .project-content {
-    padding: 2rem;
+    min-width: 0;
+    min-height: 0;
+    padding: 0.8em 1em;
+    overflow: hidden;
 }
 
 .project-title {
     color: var(--accent2);
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
+    margin-bottom: 0.1em;
+    font-size: 1.25em;
+    line-height: 1.25;
+}
+
+.project-title a {
+    text-decoration: none;
+}
+
+.project-title a:hover {
+    text-decoration: underline;
+}
+
+.project-content h4 {
+    color: #707876;
+    font-size: 0.75em;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .project-description {
-    margin-bottom: 1.5rem;
+    margin-top: 0.3em;
+    margin-bottom: 0.65em;
+    font-size: var(--card-description-size, 0.9rem);
+    line-height: 1.45;
 }
 
 .project-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.35em;
 }
 
 .tag {
     background-color: var(--secondary);
     color: var(--primary);
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.875rem;
+    padding: 0.15em 0.55em;
+    border-radius: 999px;
+    font-size: 0.75em;
+    line-height: 1.45;
 }
 
 .contact-section {
@@ -167,13 +250,26 @@ footer {
     margin-top: 4rem;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1150px) {
+    #featured,
+    #techprojects,
+    #gamedesign {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 700px) {
     .project-card {
         grid-template-columns: 1fr;
+        grid-template-rows: 180px minmax(0, 1fr);
+        height: 440px;
     }
 
-    .project-image {
-        height: 300px;
+    .project-image,
+    .project-card > a,
+    .project-card iframe {
+        height: 220px;
     }
 }
 
@@ -191,10 +287,27 @@ footer {
     main {
         margin-left: 0;
         padding: 1.5rem;
+        width: 100vw;
+        max-width: 100vw;
+    }
+
+    #featured,
+    #techprojects,
+    #gamedesign {
+        width: calc(100vw - 3rem);
+        min-width: 0;
+        max-width: calc(100vw - 3rem);
     }
 
     .project-meta {
         flex-direction: column;
         gap: 0.5rem;
+    }
+
+    .project-image,
+    .project-card > a,
+    .project-card iframe {
+        height: 180px;
+        min-height: 180px;
     }
 }
